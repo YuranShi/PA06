@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ public class KMeans {
 
 	public static ArrayList<Sample> originalData = new ArrayList<Sample>();
 	public static int numClusters;
-	static Cluster[] clusters;
+	public static Cluster[] clusters;
 	public static String filename;
 
 	public static void main(String[] args) throws FileNotFoundException {
@@ -22,9 +21,13 @@ public class KMeans {
 		System.out.print("Number of clusters: ");
 		numClusters = Sc.nextInt();
 
-		run(100);	
+		run(100);
 	}
-
+	/**
+	 *  This program initializes original data, finds random points as centroids,
+	 *  processes to find k means given number of times, and finally prints centroids.
+	 * @param times -- running times, 100 by default
+	 */
 	public static void run(int times) {
 		initializeOriginalData(filename);
 		SetRandomPoints();
