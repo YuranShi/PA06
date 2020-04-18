@@ -22,19 +22,20 @@ public class KMeans {
 		System.out.print("Number of clusters: ");
 		numClusters = Sc.nextInt();
 
-		initializeOriginalData(filename);
-		SetRandomPoints();
-		run(1000);
-		for (int i = 0; i < numClusters; i++)
-			clusters[i].printCluster();
+		run(100);	
 	}
 
 	public static void run(int times) {
+		initializeOriginalData(filename);
+		SetRandomPoints();
 		for (int i = 1; i <= times; i++) {
 			findKMeans();
 			for (int j = 0; j < numClusters && i<times ; j++)
 				clusters[j].clusterList.clear();;
 		}
+		replaceCentroid();
+		for (int i = 0; i < numClusters; i++)
+			clusters[i].printCluster();
 	}
 
 	public static void initializeOriginalData(String filename) {
@@ -79,22 +80,35 @@ public class KMeans {
 	/**
 	 * Given a sample s and a cluster list, this method adds s to the closest
 	 * cluster.
-	 * 
 	 * @return
 	 */
 	public static void addToClosestCluster(Cluster[] clusters, Sample s) {
-		double[] distances = new double[numClusters];
-		for (int i = 0; i < clusters.length; i++)
-			distances[i] = clusters[i].centroid.findDistance(s);
+		double distance = clusters[0].centroid.findDistance(s);
 		int index = 0;
-		double temp = distances[0];
-		for (int i = 1; i < distances.length; i++) {
-			if (distances[i] < temp) {
-				temp = distances[i];
+		for(int i=1; i<clusters.length; i++) {
+			if(clusters[i].centroid.findDistance(s)<distance) {
+				distance = clusters[i].centroid.findDistance(s);
 				index = i;
 			}
 		}
 		clusters[index].clusterList.add(s);
 	}
-
+	
+	/**
+	 *  This method replaces calculated centroids in array clusters with closest points.
+	 */
+	public static void replaceCentroid()
+	{
+		for(Cluster c : clusters) {
+			double distance = c.centroid.findDistance(c.clusterList.get(0));
+			int index = 0;
+			for(int i=1; i<c.clusterList.size(); i++) {
+				if(c.centroid.findDistance(c.clusterList.get(i))<distance) {
+					distance = c.centroid.findDistance(c.clusterList.get(i));
+					index = i;
+				}
+			}
+			c.centroid = c.clusterList.get(index);
+		}
+	}
 }
